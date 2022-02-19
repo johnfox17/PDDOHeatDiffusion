@@ -23,11 +23,11 @@ void Geometry::peri2DMesh(){
     //XLENGTH, YLENGTH, XMATERIALPOINTS, YMATERIALPOINTS, HORIZON
     cout<<"-----Creating Peridynamic Mesh-----"<<endl;
     
-    for(int j = 0;j<YMATERIALPOINTS;j++){
-        for(int i =0;i<XMATERIALPOINTS;i++){
-            nodes[YMATERIALPOINTS * j + i].setNodeNum(YMATERIALPOINTS * j + i);
-            nodes[YMATERIALPOINTS * j + i].setX(i*delX);
-            nodes[YMATERIALPOINTS * j + i].setY(j*delY);
+    for(int j = 0;j<YMATERIALPOINTSEXTENDED;j++){
+        for(int i =0;i<XMATERIALPOINTSEXTENDED;i++){
+            nodes[YMATERIALPOINTSEXTENDED * j + i].setNodeNum(YMATERIALPOINTSEXTENDED * j + i);
+            nodes[YMATERIALPOINTSEXTENDED * j + i].setX(i*delX);
+            nodes[YMATERIALPOINTSEXTENDED * j + i].setY(j*delY);
             
         }
     }
@@ -37,7 +37,7 @@ void Geometry::peri2DMesh(){
     ofstream myfile;
     myfile.open("/home/doctajfox/Documents/Thesis_Research/data/data.csv");
     
-    for(int i = 0;i<TOTALNODES;i++){
+    for(int i = 0;i<TOTALNODESEXTENDED;i++){
         myfile<<p_nodes[i].getNodeNum()<<","<<p_nodes[i].getX()<<","<<p_nodes[i].getY()<<endl;
     }
     

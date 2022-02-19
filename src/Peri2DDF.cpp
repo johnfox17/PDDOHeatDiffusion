@@ -3,7 +3,7 @@
 
 void Peri2DDF::initialize(Geometry* B){
     p_B = B;
-    FindPDDOFamilies();
+    
     
 };
 
@@ -13,16 +13,74 @@ void Peri2DDF::initialize(Geometry* B){
 void Peri2DDF::GenBMatrix(){
 
 };
+//Function that calculates Peridynamic Weight
+float Peri2DDF::CalculateWeight(float distance){
+    float delta = HORIZON*p_B->delX;
+    return exp(-4.0*pow(distance/delta,2));
+};
+
+//Function that calculates A vector
+vector<float> Peri2DDF::CalculateAVector(float xCoordCurrentNode,float yCoordCurrentNode, float xCoordFamilyMember, float yCoordFamilyMember){
+    vector<float> AVector;
+    float ksi1, ksi2;
+  
+    ksi1 = xCoordCurrentNode-xCoordFamilyMember;
+    ksi2 = yCoordCurrentNode-yCoordFamilyMember;
+    AVector.push_back(1);
+	AVector.push_back(ksi1);
+	AVector.push_back(ksi2);
+	AVector.push_back(ksi1 * ksi1);
+	AVector.push_back(ksi2 * ksi2);
+	AVector.push_back(ksi1 * ksi2);    
+    return AVector;
+};
 
 //Function that created A matrix
-void Peri2DDF::GenAMatrix(){
-
+void Peri2DDF::GenAMatrix(int currentNode){
+    //float aVector[KSIVECTSIZE];
+    
+    float xCoordFamilyMember, yCoordFamilyMember;
+    vector<float> AVector;
+    float weight;
+    float xCoordCurrentNode = p_B->nodes[currentNode].getX(); 
+    float yCoordCurrentNode = p_B->nodes[currentNode].getY(); 
+    float distanceBetweenNodes; 
+    cout<<"Current Node--> "<<currentNode<<endl;
+    //TODO: here the A matrix must be initiallized 
+  
+    for(int i=0;i<currentNodeFamily.size();i++){
+        
+        cout<< "Node--> "<<currentNodeFamily[i]<<endl;
+        xCoordFamilyMember = p_B->nodes[currentNodeFamily[i]].getX();  
+        yCoordFamilyMember = p_B->nodes[currentNodeFamily[i]].getY(); 
+        //Calculate AVectors of each family member of current node 
+        AVector = CalculateAVector(xCoordCurrentNode, yCoordCurrentNode, xCoordFamilyMember, yCoordFamilyMember);
+        //Generate Peridynamic weights for each family member of current node
+        distanceBetweenNodes = p_B->euclideanDist(xCoordCurrentNode, yCoordCurrentNode, xCoordFamilyMember, yCoordFamilyMember);
+        //Calculate Peridynamic Weight
+        weight = CalculateWeight(distanceBetweenNodes);
+        cout<<weight<<endl;
+        //for(int j =0;j<AVector.size();j++){
+        //    cout<<AVector[j]<<endl;
+        
+        //}
+        
+        
+    };
+ 
+    /*Point<2> ksi_vec = Vecdist(cc, cf);
+	double ksi_mag = Eucdist(cc, cf);
+	double ksi_1 = ksi_vec.x[0];
+	double ksi_2 = ksi_vec.x[1];
+	Vec Avec(6);
+	
+	double w = Wfunc(ksi_mag, Delta);
+	Mat Amat = Outer(Avec, Avec);
+	Amat.MultScal(w);
+	return Amat;*/
 };
 
-//Function that created Peridynamic Weights
-void Peri2DDF::GenWeights(){
 
-};
 //void Peri2DDF::findPDDOFamilies(node* p_nodes){
 void Peri2DDF::FindPDDOFamilies(){
     float dist;
@@ -30,11 +88,11 @@ void Peri2DDF::FindPDDOFamilies(){
     //node* p_nodes1=p_nodes;
     node* p_nodes2;
     float horizonDist = HORIZON*p_B->delX;
-    for(int i=0; i<TOTALNODES;i++){
+    for(int i=0; i<TOTALNODESEXTENDED; i++){
         vector<int> currentNodeFamily;
         //p_nodes2=p_nodes;
         p_nodes2=p_B->p_nodes;
-        for(int j=0; j<TOTALNODES;j++){
+        for(int j=0; j<TOTALNODESEXTENDED;j++){
             dist = p_B->euclideanDist(p_nodes1->getX(),p_nodes1->getY(),p_nodes2->getX(),p_nodes2->getY());
             if(dist <= horizonDist && dist!=0.0){
                 currentNodeFamily.push_back(p_nodes2->getNodeNum());
@@ -48,12 +106,27 @@ void Peri2DDF::FindPDDOFamilies(){
 };
 
 void Peri2DDF::CalcGPolynomials(){
+    for(int currentNode = 0; currentNode<TOTALNODESEXTENDED; currentNode++){
+        currentNodeFamily = nodeFamilies[currentNode];
+        GenAMatrix(currentNode);
+        
+
+        cout<<"here"<<endl;
+        //Generate A matrix
+        
+        //Generate 'a' matrix (inverse A matrix)
+
+        //Generate g polynomials
+    };
+
+
 
 };
 
 Peri2DDF::Peri2DDF(Geometry *B){
     
     initialize(B);
+    FindPDDOFamilies();
     CalcGPolynomials();
     //p_nodes = B.p_nodes; //Exctracting node coordinates
     //p_nodes = B->p_nodes;

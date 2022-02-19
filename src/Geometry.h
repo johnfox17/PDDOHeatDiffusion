@@ -48,7 +48,7 @@ private:
 public:
     Geometry(); // Constructor
     //Creating array of Peridynamic nodes 
-    node nodes[TOTALNODES];
+    node nodes[TOTALNODESEXTENDED];
     node *p_nodes;
 
     float delX, delY; 

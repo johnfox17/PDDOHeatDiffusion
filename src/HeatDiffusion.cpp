@@ -19,10 +19,10 @@ void HeatDiffusion::InitialCondition(Geometry *B){
 HeatDiffusion::HeatDiffusion(Geometry *B, Peri2DDF *peri2DD){
     InitialCondition(B);
 
-    ofstream myfile;
+    /*ofstream myfile;
     myfile.open("/home/doctajfox/Documents/Thesis_Research/data/data.csv");
     
     for(int i = 0;i<TOTALNODES;i++){
         myfile<<solution[i]<<endl;
-    }
+    }*/
 };
