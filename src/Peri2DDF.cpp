@@ -41,15 +41,18 @@ void Peri2DDF::GenAMatrix(int currentNode){
     
     float xCoordFamilyMember, yCoordFamilyMember;
     vector<float> AVector;
+   
+    
     float weight;
     float xCoordCurrentNode = p_B->nodes[currentNode].getX(); 
     float yCoordCurrentNode = p_B->nodes[currentNode].getY(); 
+    float deltaV = p_B->delX*p_B->delY;
     float distanceBetweenNodes; 
+
     cout<<"Current Node--> "<<currentNode<<endl;
-    //TODO: here the A matrix must be initiallized 
-  
+    InitializeZeroVector(AMat, AMATSIZE); 
     for(int i=0;i<currentNodeFamily.size();i++){
-        
+        vector<float> AMatAux;
         cout<< "Node--> "<<currentNodeFamily[i]<<endl;
         xCoordFamilyMember = p_B->nodes[currentNodeFamily[i]].getX();  
         yCoordFamilyMember = p_B->nodes[currentNodeFamily[i]].getY(); 
@@ -59,25 +62,13 @@ void Peri2DDF::GenAMatrix(int currentNode){
         distanceBetweenNodes = p_B->euclideanDist(xCoordCurrentNode, yCoordCurrentNode, xCoordFamilyMember, yCoordFamilyMember);
         //Calculate Peridynamic Weight
         weight = CalculateWeight(distanceBetweenNodes);
-        cout<<weight<<endl;
-        //for(int j =0;j<AVector.size();j++){
-        //    cout<<AVector[j]<<endl;
-        
-        //}
-        
-        
+        //Calculate outer product of two AVectors
+        OuterProduct(AMatAux, AVector, AVector);
+        //Scalar times vector multiplication
+        ScalarTimesMatrix(AMatAux, weight);
+        //Add A matrices of node family
+        AddArrays(AMat, AMat, AMatAux);               
     };
- 
-    /*Point<2> ksi_vec = Vecdist(cc, cf);
-	double ksi_mag = Eucdist(cc, cf);
-	double ksi_1 = ksi_vec.x[0];
-	double ksi_2 = ksi_vec.x[1];
-	Vec Avec(6);
-	
-	double w = Wfunc(ksi_mag, Delta);
-	Mat Amat = Outer(Avec, Avec);
-	Amat.MultScal(w);
-	return Amat;*/
 };
 
 
