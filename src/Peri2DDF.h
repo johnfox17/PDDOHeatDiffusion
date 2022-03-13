@@ -16,7 +16,7 @@ private:
     vector<vector<int>> xiVector;
     vector<int> currentNodeFamily;
     float GPolynomials[TOTALNODES];
-    float AMat[AMATSIZE]; 
+    vector<float> AMat;
     int currentNode;
     //node nodes[TOTALNODESEXTENDED];
 
